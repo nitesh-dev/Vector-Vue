@@ -2,5 +2,5 @@
 
 made with vuejs
 
-#contributers
-  abhishek
+#contributers  
+*abhishek
