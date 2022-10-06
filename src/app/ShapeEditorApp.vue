@@ -1,8 +1,8 @@
 <script setup lang='ts'>
 
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref, toRaw, watch } from 'vue';
 import ShapeBar from '../components/ShapeBar.vue';
-import { CanvasHelper, MouseEvent } from '../ts/CanvasHelper';
+import { CanvasHelper, KeyEvent, MouseEvent } from '../ts/CanvasHelper';
 import { Color } from '../ts/CanvasRender';
 import { Help } from '../ts/help';
 import { CanvasRender } from "../ts/CanvasRender";
@@ -12,6 +12,7 @@ const selectedShape = ref<Shape | null>()
 const canv = ref<HTMLCanvasElement>()
 const canvasPanel = ref<HTMLElement>()
 const shapes = Array<Shape>();
+const shapesHelper = new ArrayHelper(shapes)
 var drawer: Drawer
 const paintOptions = ref([
     { text: 'Fill', value: PaintStyle.FILL },
@@ -21,9 +22,6 @@ const paintOptions = ref([
 const refNum = ref(0)
 //-------------------------
 onMounted(() => {
-    shapes.push(new Rect())
-    shapes.push(new Ellipse())
-    shapes.push(new Rect())
     selectedShape.value = shapes[1]
     drawer = new Drawer(canv.value!)
     const re = new ResizeObserver((e) => {
@@ -87,11 +85,14 @@ class Drawer extends CanvasHelper {
             // console.log(selectedShape.value)
         }
         //console.log(shapes)
+
+
     }
     protected onMouseUp(e: MouseEvent): void {
 
     }
     protected onMouseMove(e: MouseEvent): void {
+        
         const diffPoint = new Point(
             e.x - this.downPoint.x,
             e.y - this.downPoint.y,
@@ -122,6 +123,7 @@ class Drawer extends CanvasHelper {
                 diffPoint.y * 0.5,
             )
             selectedShape.value = shape
+            shapes.push(shape)
         }
         //transform
         else if (
@@ -147,8 +149,6 @@ class Drawer extends CanvasHelper {
                 const r = selectedShape.value as Rect
                 r.width = diffPoint.x;
                 r.height = diffPoint.y;
-                console.log(diffPoint)
-
             }
             else if (selectedShape.value instanceof Ellipse) {
                 const ellipse = selectedShape.value as Ellipse
@@ -160,6 +160,26 @@ class Drawer extends CanvasHelper {
 
         }
         this.repaint()
+    }
+    protected override onkeyDown(e: KeyEvent): void {
+        console.log(" key:" + e.key)
+        if (selectedShape.value && e.key == "Delete") {
+
+            shapesHelper.remove(toRaw(selectedShape.value))
+
+            selectedShape.value = null
+        }
+        //delete all
+        if(shapes.length && e.key=="d"){
+            shapesHelper.makeEmpty()
+            selectedShape.value=null
+        }
+        // const shape:Shape=new Ellipse() 
+        // const sarr:Shape[]=[shape]
+        // const f=sarr[0]
+        // console.log(sarr[0] === f)
+
+
     }
     //----------help
     findShape(p: Point): Shape | null {
@@ -254,23 +274,13 @@ canvas {
     overflow: hidden;
 }
 
-.twoCol {
-    /* display: grid;
-    grid-template-columns: 100px auto;
-    height: 100%; */
-
-
-}
 
 .propertyPanel {
     height: 100vh;
     overflow: auto;
 }
 
-.twoCol>div>* {
-    /* display: block;
-    max-width: 100px; */
-}
+
 
 .log {
     font-size: 11px;
@@ -300,6 +310,7 @@ canvas {
 
 
 <script lang="ts">import { Point } from '../ts/Type';
+import { ArrayHelper } from '../ts/ArrayHelper';
 
 
 
