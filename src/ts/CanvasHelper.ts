@@ -36,7 +36,7 @@ export class CanvasHelper {
       );
     });
     this.htmlCanvas.addEventListener("keydown", (e) => {
-        console.log(e.key)      
+        this.onkeyDown(new KeyEvent(e.key))  
     },false);
   }
   public resize(w: number, h: number) {

@@ -4,9 +4,9 @@ import { Point } from "./Type";
 export type CanvasContext = CanvasRenderingContext2D;
 export class Color {
   constructor(public nColor: string) {}
-  public static rgba(r: number, g: number, b: number, a: number): Color {
-    return new Color(`rgba(${r},${g},${b},${a / 255})`);
-  }
+  // public static rgba(r: number, g: number, b: number, a: number): Color {
+  //   return new Color(`rgba(${r},${g},${b},${a / 255})`);
+  // }
   public static hex(rgba: number): Color {
     return new Color(`#${rgba.toString(16)}`);
   }
