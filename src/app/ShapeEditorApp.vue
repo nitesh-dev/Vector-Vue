@@ -229,10 +229,6 @@ canvas {
     outline: none;
 }
 
-* {
-    padding: 0px;
-    margin: 0px;
-}
 
 .panels {
     display: grid;
